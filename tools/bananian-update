@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# The MIT License (MIT)
+#
+# Copyright (c) 2014 Nico Isenbeck <contact@bananian.org>
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in
+# all copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+# THE SOFTWARE.
+
+# clear the screen
+clear
+
+# get Bananian version
+[ -f /etc/bananian_version ] && BANANIAN_VERSION=$(cat /etc/bananian_version) || BANANIAN_VERSION=140801
+READABLE_VERSION="$(echo $BANANIAN_VERSION | cut -b 1-2).$(echo $BANANIAN_VERSION | cut -b 3-4) r$(echo $BANANIAN_VERSION | cut -b  5-6)"
+
+echo -e "---------------------------------------------------------------------------------"
+echo -e "\033[40;37mWelcome to bananian-update!\033[0m \n"
+echo -e "This script upgrades your Bananian installation. \n"
+echo -e "For news and updates check: http://www.bananian.org \n"
+echo -e "\033[0;31mDon't panic, you will be asked to confirm before applying any updates!\033[0m \n"
+
+# on 14.08 we need to install curl first
+if ! [ -f /usr/bin/curl ]; then {
+        echo -e "---------------------------------------------------------------------------------"
+        echo -e "we need to install curl first... (please wait) \n"
+        aptitude update && aptitude install -y curl
+} fi
+
+# prepare tmp dir
+TMPDIR=$(mktemp -d)
+cd $TMPDIR
+
+echo -e "---------------------------------------------------------------------------------"
+echo -e "receiving/updating public key... \n"
+gpg --recv-keys 24BFF712
+echo -e ""
+
+echo -e "---------------------------------------------------------------------------------"
+echo -e "downloading latest upgrade from dl.bananian.org... (this might take a while)\n"
+curl -L https://dl.bananian.org/upgrade/$BANANIAN_VERSION/update.tar.gz -o $TMPDIR/update.tar.gz
+curl -L https://dl.bananian.org/upgrade/$BANANIAN_VERSION/update.tar.gz.asc -o $TMPDIR/update.tar.gz.asc
+echo -e ""
+
+echo -e "---------------------------------------------------------------------------------"
+echo -e "verifying signature... \n"
+gpg --verify $TMPDIR/update.tar.gz.asc
+if [ $? -ne 0 ]; then {
+        echo -e "\n\033[40;31minvalid signature. exiting!\033[0m"
+	rm -rf $TMPDIR
+        exit
+} else {
+        echo -e "\nsignature okay.\n"
+} fi
+
+echo -e "---------------------------------------------------------------------------------"
+echo -e "extracting upgrade... \n"
+tar -xzf $TMPDIR/update.tar.gz -C $TMPDIR
+
+# include the update script
+source $TMPDIR/update.sh
+
+# clean up
+rm -rf $TMPDIR
