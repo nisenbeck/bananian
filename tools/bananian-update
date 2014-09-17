@@ -42,6 +42,14 @@ if ! [ -f /usr/bin/curl ]; then {
         aptitude update && aptitude install -y curl
 } fi
 
+# on 14.08 we need to create a GnuPG config first
+if ! [ -f /root/.gnupg/gpg.conf ]; then {
+        echo -e "---------------------------------------------------------------------------------"
+        echo -e "we need to create a default GnuPG config first... \n"
+        gpg -k
+        echo -e ""
+} fi
+
 # prepare tmp dir
 TMPDIR=$(mktemp -d)
 cd $TMPDIR
