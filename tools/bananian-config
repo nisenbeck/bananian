@@ -186,7 +186,7 @@ echo -e "-----------------------------------------------------------------------
 echo -n "Do you want to expand the root file system (recommended)? (y/n) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
-        echo -e "\nExpanding root file system... (restart required) \n"
+        echo -e "\nExpanding root file system... (ignore the warnings and reboot immediately) \n"
 	/usr/local/bin/raspi-config --expand-rootfs
         echo -e ""
 } fi
