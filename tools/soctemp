@@ -1,0 +1,40 @@
+#!/bin/bash
+soctemp() {
+        # function to read out the thermal probes of the touch panel controller
+        # that is integrated into the A20 SoC. For background information have a
+        # look at http://forum.lemaker.org/thread-8137-3-1-3.html
+
+        # SoCTempAdjustment is needed because the A20 SoC delivers somewhat
+        # uncalibrated temp values. Even after calibration the values are
+        # inaccurate by a few degrees
+        SoCTempAdjustment=1447
+
+        # ensure module sunxi-dbgreg.ko is loaded
+        grep -q sunxi_dbgreg </proc/modules || ( modprobe sunxi-dbgreg ; sleep 0.1 )
+
+        # prepare registers
+        echo 'f1c25000:27003f' > /sys/devices/virtual/misc/sunxi-dbgreg/rw/write;
+        echo 'f1c25010:40000' > /sys/devices/virtual/misc/sunxi-dbgreg/rw/write;
+        echo 'f1c25018:10fff' > /sys/devices/virtual/misc/sunxi-dbgreg/rw/write;
+        echo 'f1c25004:90' > /sys/devices/virtual/misc/sunxi-dbgreg/rw/write;
+
+        # let the value be written to syslog
+        echo 'f1c25020' > /sys/devices/virtual/misc/sunxi-dbgreg/rw/read;
+
+        # wait 0.1 seconds
+        sleep 0.1
+
+        # read return value from syslog and transform it into degrees Celsius
+        HexVal=$(tail /var/log/syslog | awk -F" 0x" '/ 0x/ {print $2}' | tail -n1 )
+        CelsiusVal=$(echo $(( 0x${HexVal} - ${SoCTempAdjustment} )) | awk '{printf ("%0.1f",$1/10); }')
+        case $1 in
+                f|F)
+                        echo ${CelsiusVal} | awk '{print "approx. "( ( 9/5 ) * $1 ) + 32"°F"}'
+                        ;;
+                *)
+                        echo "approx. ${CelsiusVal}°C"
+                        ;;
+        esac
+} # soctemp
+
+soctemp $1
