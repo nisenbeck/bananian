@@ -173,8 +173,20 @@ case "$SCRIPTBIN" in
         echo -n "USB OTG is currently disabled. Do you want to enable it? (y/n) "
         read CHANGE
         if [ "$CHANGE" = "y" ]; then {
-                cp $TMPDIR/mnt/script.bin.otg-on $TMPDIR/mnt/script.bin
-                echo -e "\nUSB OTG enabled... (restart required) \n"
+	        echo -e ""
+                echo -e "\033[0;31mWarning: Enabling OTG can lead to an unbootable system!\033[0m"
+	        echo -e "To avoid this issue please make sure you use the 'DC in' port for power supply"
+                echo -e "in combination with a reliable 2 A power adapter \n"
+		echo -e "---------------------------------------------------------------------------------"
+	        echo -n "Do you want to continue? (y/n) "
+	        read CHANGE
+	        if [ "$CHANGE" = "y" ]; then {
+        	        cp $TMPDIR/mnt/script.bin.otg-on $TMPDIR/mnt/script.bin
+                	echo -e "\nUSB OTG enabled... (restart required) \n"
+		} else {
+				echo -e ""
+			        echo -e "Skipping OTG configuration... \n"
+	        } fi
         } fi
         ;;
   *)
