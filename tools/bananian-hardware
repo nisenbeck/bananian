@@ -54,6 +54,13 @@ BANANIAN_PLATFORM=$(whiptail --title "Bananian hardware configuration" --radioli
 	"${RADIOLIST[@]}" \
 	3>&1 1>&2 2>&3)
 
+if [[ $BANANIAN_PLATFORM == *"OTG"* ]] || [[ $BANANIAN_PLATFORM == *"otg"* ]]
+then
+	if ! (whiptail --title "Warning" --yesno "Enabling OTG can lead to an unbootable system!\nTo avoid this issue please make sure you use the 'DC in' port for power supply\nin combination with a reliable 2 A power adapter\n\nDo you want to continue?" 12 85) then
+		BANANIAN_PLATFORM=""
+	fi
+fi
+
 # verify selection and set correct script.bin
 if [[ -z $BANANIAN_PLATFORM ]]
 then
