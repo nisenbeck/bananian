@@ -59,7 +59,7 @@ if [[ -z $BANANIAN_PLATFORM ]]
 then
 	echo -e "\033[40;31m No platform selected. exiting!\033[0m"
 else
-	cp ${FEXDIR}/${BANANIAN_PLATFORM}/script.bin /home/nisenbeck
+	cp ${FEXDIR}/${BANANIAN_PLATFORM}/script.bin ${TMPDIR}/mnt/script.bin
 	echo $BANANIAN_PLATFORM > /etc/bananian_platform
 	echo -e "\033[32;40m Hardware configuration has been changed to: ${BANANIAN_PLATFORM}. Please reboot your system now!\033[0m"
 fi
