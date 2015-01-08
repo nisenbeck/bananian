@@ -22,8 +22,14 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 # THE SOFTWARE.
 
-# get Bananian platform (default: BananaPi)
+# get Bananian platform (default: BananaPi) and version
 [ -f /etc/bananian_platform ] && BANANIAN_PLATFORM=$(cat /etc/bananian_platform) || BANANIAN_PLATFORM="BananaPi"
+[ -f /etc/bananian_version ] && BANANIAN_VERSION=$(cat /etc/bananian_version) || BANANIAN_VERSION=140801
+
+if [ $BANANIAN_VERSION -lt 150101 ]; then {
+        echo -e "\033[0;31mThis version of bananian-hardware requires Bananian Linux 15.01 (or later). Exiting\033[0m"
+        exit
+} fi
 
 # prepare tmp dir
 TMPDIR=$(mktemp -d)
@@ -41,10 +47,10 @@ RADIOLIST=()
 for FEX in ${FEXDIR}/*
 do
 	FEX=$(basename $FEX)
-	if [ "$FEX" == "$BANANIAN_PLATFORM" ]; then {
-	RADIOLIST+=("$FEX" "" "ON")
+	if [ "$FEX" = "$BANANIAN_PLATFORM" ]; then {
+		RADIOLIST+=("$FEX" "" "ON")
 	} else {
-	RADIOLIST+=("$FEX" "" "OFF")
+		RADIOLIST+=("$FEX" "" "OFF")
 	} fi
 done
 
@@ -54,22 +60,24 @@ BANANIAN_PLATFORM=$(whiptail --title "Bananian hardware configuration" --radioli
 	"${RADIOLIST[@]}" \
 	3>&1 1>&2 2>&3)
 
-if [[ $BANANIAN_PLATFORM == *"OTG"* ]] || [[ $BANANIAN_PLATFORM == *"otg"* ]]
-then
-	if ! (whiptail --title "Warning" --yesno "Enabling OTG can lead to an unbootable system!\nTo avoid this issue please make sure you use the 'DC in' port for power supply\nin combination with a reliable 2 A power adapter\n\nDo you want to continue?" 12 85) then
+if [[ $BANANIAN_PLATFORM = *"OTG"* ]] || [[ $BANANIAN_PLATFORM = *"otg"* ]]; then {
+	if ! (whiptail --title "Warning" --yesno "Enabling OTG can lead to an unbootable system!\nTo avoid this issue please make sure you use the 'DC in' port for power supply\nin combination with a reliable 2 A power adapter\n\nDo you want to continue?" 12 85); then {
 		BANANIAN_PLATFORM=""
-	fi
-fi
+	} fi
+} fi
 
 # verify selection and set correct script.bin
-if [[ -z $BANANIAN_PLATFORM ]]
-then
-	echo -e "\033[40;31m No platform selected. exiting!\033[0m"
-else
-	cp ${FEXDIR}/${BANANIAN_PLATFORM}/script.bin ${TMPDIR}/mnt/script.bin
-	echo $BANANIAN_PLATFORM > /etc/bananian_platform
-	echo -e "\033[32;40m Hardware configuration has been changed to: ${BANANIAN_PLATFORM}. Please reboot your system now!\033[0m"
-fi
+if [[ -z $BANANIAN_PLATFORM ]]; then {
+	echo -e "\033[0;31mNo platform selected. exiting!\033[0m"
+} else {
+	if [[ -f ${FEXDIR}/${BANANIAN_PLATFORM}/script.bin ]]; then {
+		cp ${FEXDIR}/${BANANIAN_PLATFORM}/script.bin ${TMPDIR}/mnt/script.bin
+		echo $BANANIAN_PLATFORM > /etc/bananian_platform
+		echo -e "Hardware configuration has been set to: ${BANANIAN_PLATFORM}. Please reboot your system!"
+	} else {
+		echo -e "\033[0;31mscript.bin not found. exiting!\033[0m"
+	} fi
+} fi
 
 # clean up
 umount ${TMPDIR}/mnt && rm -rf $TMPDIR

@@ -63,9 +63,9 @@ UENV_NOACC=$(sha256sum ${TMPDIR}/mnt/uENV.txt.video-acc-off | awk -F ' ' '{print
 #echo $UENV_ACC		 # uEnv.txt with video acceleration (hash)
 #echo $UENV_NOACC	 # uEnv.txt without video acceleration (hash)
 
-if [ $BANANIAN_VERSION -lt 140901 ]; then {
+if [ $BANANIAN_VERSION -lt 150101 ]; then {
 	echo -e "---------------------------------------------------------------------------------"
-	echo -e "\033[0;31mThis version of bananian-config requires Bananian Linux 14.09 (or later). Exiting\033[0m \n"
+	echo -e "\033[0;31mThis version of bananian-config requires Bananian Linux 15.01 (or later). Exiting\033[0m \n"
 	exit
 } fi
 
@@ -81,7 +81,7 @@ if [ "$CHANGE" = "y" ]; then {
 
 echo -e "---------------------------------------------------------------------------------"
 if [ "$ROOTPW" = "$DEFAULTROOTPW" ]; then {
-	echo -e "\033[31;40mYour current root password is still 'pi'. You have to change it now!\033[0m"
+	echo -e "\033[0;31mYour current root password is still 'pi'. You have to change it now!\033[0m"
         echo -e "\nConfiguring root password... \n"
 	passwd
 	echo -e ""
