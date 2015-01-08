@@ -30,8 +30,8 @@ TMPDIR=$(mktemp -d)
 cd $TMPDIR
 
 # mount /dev/mmcblk0p1
-mkdir $TMPDIR/mnt
-mount /dev/mmcblk0p1 $TMPDIR/mnt
+mkdir ${TMPDIR}/mnt
+mount /dev/mmcblk0p1 ${TMPDIR}/mnt
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "\033[40;37mWelcome to bananian-config!\033[0m \n"
@@ -39,36 +39,29 @@ echo -e "This script assists you to set up some basic parameters... \n"
 echo -e "For news and updates check: http://www.bananian.org \n"
 
 # collect system configuration
+[ -f /etc/bananian_platform ] && BANANIAN_PLATFORM=$(cat /etc/bananian_platform) || BANANIAN_PLATFORM="BananaPi"
 [ -f /etc/bananian_version ] && BANANIAN_VERSION=$(cat /etc/bananian_version) || BANANIAN_VERSION=140801
 source /etc/default/keyboard
 ROOTPW=$(grep root /etc/shadow | awk -F ':' '{print $2}')
 DEFAULTROOTPW='$6$/QGAKW6x$crDc1KVl8u/mhU9l.LPxm3b47PIzZtjL0SmSDlEbInHu6UsusGnuCjSs2ngwv4HekpK0SwEyfKWPf97zHul.71'
 TIMEZONE=$(cat /etc/timezone)
 HOSTNAME=$(cat /etc/hostname)
-UENV=$(sha256sum $TMPDIR/mnt/uENV.txt | awk -F ' ' '{print $1}')
-SCRIPTBIN=$(sha256sum $TMPDIR/mnt/script.bin | awk -F ' ' '{print $1}')
+UENV=$(sha256sum ${TMPDIR}/mnt/uENV.txt | awk -F ' ' '{print $1}')
 
-UENV_ACC=$(sha256sum $TMPDIR/mnt/uENV.txt.video-acc-on | awk -F ' ' '{print $1}')
-UENV_NOACC=$(sha256sum $TMPDIR/mnt/uENV.txt.video-acc-off | awk -F ' ' '{print $1}')
+UENV_ACC=$(sha256sum ${TMPDIR}/mnt/uENV.txt.video-acc-on | awk -F ' ' '{print $1}')
+UENV_NOACC=$(sha256sum ${TMPDIR}/mnt/uENV.txt.video-acc-off | awk -F ' ' '{print $1}')
 
-SCRIPTBIN_OTG=$(sha256sum $TMPDIR/mnt/script.bin.otg-on | awk -F ' ' '{print $1}')
-SCRIPTBIN_NOOTG=$(sha256sum $TMPDIR/mnt/script.bin.otg-off | awk -F ' ' '{print $1}')
-
-#echo $BANANIAN_VERSION # Bananian Release
-#echo $XKBLAYOUT # keyboard layout
-#echo $ROOTPW # hashed root password
-#echo $DEFAULTROOTPW # Bananian initial password hash (pi)
-#echo $TIMEZONE # timezone
-#echo $LANG # locale
-#echo $HOSTNAME # hostname (as in /etc/hostname)
-#echo $UENV # uEnv.txt hash
-#echo $SCRIPTBIN # script.bin hash
-
-#echo $UENV_ACC # uEnv.txt with video acceleration (hash)
-#echo $UENV_NOACC # uEnv.txt without video acceleration (hash)
-
-#echo $SCRIPTBIN_OTG # script.bin with USB OTG support (hash)
-#echo $SCRIPTBIN_NOOTG # script.bin without USB OTG support (hash)
+#echo $BANANIAN_PLATFORM # Bananian platform/board
+#echo $BANANIAN_VERSION	 # Bananian Release
+#echo $XKBLAYOUT	 # keyboard layout
+#echo $ROOTPW		 # hashed root password
+#echo $DEFAULTROOTPW 	 # Bananian initial password hash (pi)
+#echo $TIMEZONE		 # timezone
+#echo $LANG		 # locale
+#echo $HOSTNAME		 # hostname (as in /etc/hostname)
+#echo $UENV		 # uEnv.txt hash
+#echo $UENV_ACC		 # uEnv.txt with video acceleration (hash)
+#echo $UENV_NOACC	 # uEnv.txt without video acceleration (hash)
 
 if [ $BANANIAN_VERSION -lt 140901 ]; then {
 	echo -e "---------------------------------------------------------------------------------"
@@ -77,7 +70,7 @@ if [ $BANANIAN_VERSION -lt 140901 ]; then {
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
-echo -n "Your current keyboard layout is '$XKBLAYOUT'. Do you want to change it? (y/n) "
+echo -n "Your current keyboard layout is '${XKBLAYOUT}'. Do you want to change it? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
         echo -e "\nConfiguring keyboard layout... \n"
@@ -93,7 +86,7 @@ if [ "$ROOTPW" = "$DEFAULTROOTPW" ]; then {
 	passwd
 	echo -e ""
 } else {
-	echo -n "Do you want to change your root password? (y/n) "
+	echo -n "Do you want to change your root password? (y/N) "
 	read CHANGE
 	if [ "$CHANGE" = "y" ]; then {
 	        echo -e "\nConfiguring root password... \n"
@@ -103,7 +96,7 @@ if [ "$ROOTPW" = "$DEFAULTROOTPW" ]; then {
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
-echo -n "Your current timezone is '$TIMEZONE'. Do you want to change it? (y/n) "
+echo -n "Your current timezone is '${TIMEZONE}'. Do you want to change it? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
         echo -e "\nConfiguring timezone... \n"
@@ -111,7 +104,7 @@ if [ "$CHANGE" = "y" ]; then {
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
-echo -n "Your current locale is '$LANG'. Do you want to change it? (y/n) "
+echo -n "Your current locale is '${LANG}'. Do you want to change it? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
         echo -e "\nConfiguring locales... \n"
@@ -120,17 +113,17 @@ if [ "$CHANGE" = "y" ]; then {
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
-echo -n "Your current hostname is '$HOSTNAME'. Do you want to change it? (y/n) "
+echo -n "Your current hostname is '${HOSTNAME}'. Do you want to change it? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
         echo -e "\nConfiguring hostname... (restart required) \n"
 	echo -n "Enter new hostname: "
-	read new_hostname
-	CHECK=$(echo $new_hostname | grep -E "[^[:alnum:]\-]")
-	if [[ "$CHECK" != "" ]] || [[ "$new_hostname" = "" ]]; then {
-		echo -e "\033[0;31m'$new_hostname' is not a valid hostname! Skipping...\033[0m"
+	read NEW_HOSTNAME
+	CHECK=$(echo $NEW_HOSTNAME | grep -E "[^[:alnum:]\-]")
+	if [[ "$CHECK" != "" ]] || [[ "$NEW_HOSTNAME" = "" ]]; then {
+		echo -e "\033[0;31m'${NEW_HOSTNAME}' is not a valid hostname! Skipping...\033[0m"
 	} else {
-		echo $new_hostname > /etc/hostname
+		echo $NEW_HOSTNAME > /etc/hostname
 		/etc/init.d/hostname.sh
 	} fi
 	echo -e ""
@@ -139,18 +132,18 @@ if [ "$CHANGE" = "y" ]; then {
 echo -e "---------------------------------------------------------------------------------"
 case "$UENV" in
   $UENV_ACC)
-	echo -n "Video acceleration is currently enabled. Do you want to disable it? (y/n) "
+	echo -n "Video acceleration is currently enabled. Do you want to disable it? (y/N) "
 	read CHANGE
 	if [ "$CHANGE" = "y" ]; then {
-                cp $TMPDIR/mnt/uENV.txt.video-acc-off $TMPDIR/mnt/uENV.txt
+                cp ${TMPDIR}/mnt/uENV.txt.video-acc-off ${TMPDIR}/mnt/uENV.txt
                 echo -e "\nVideo acceleration disabled... (restart required) \n"
 	} fi
 	;;
   $UENV_NOACC)
-	echo -n "Video acceleration is currently disabled. Do you want to enable it? (y/n) "
+	echo -n "Video acceleration is currently disabled. Do you want to enable it? (y/N) "
         read CHANGE
         if [ "$CHANGE" = "y" ]; then {
-		cp $TMPDIR/mnt/uENV.txt.video-acc-on $TMPDIR/mnt/uENV.txt
+		cp ${TMPDIR}/mnt/uENV.txt.video-acc-on ${TMPDIR}/mnt/uENV.txt
                 echo -e "\nVideo acceleration enabled... (restart required) \n"
         } fi
 	;;
@@ -160,42 +153,17 @@ case "$UENV" in
 esac
 
 echo -e "---------------------------------------------------------------------------------"
-case "$SCRIPTBIN" in
-  $SCRIPTBIN_OTG)
-        echo -n "USB OTG is currently enabled. Do you want to disable it? (y/n) "
-        read CHANGE
-        if [ "$CHANGE" = "y" ]; then {
-                cp $TMPDIR/mnt/script.bin.otg-off $TMPDIR/mnt/script.bin
-                echo -e "\nUSB OTG disabled... (restart required) \n"
-        } fi
-        ;;
-  $SCRIPTBIN_NOOTG)
-        echo -n "USB OTG is currently disabled. Do you want to enable it? (y/n) "
-        read CHANGE
-        if [ "$CHANGE" = "y" ]; then {
-	        echo -e ""
-                echo -e "\033[0;31mWarning: Enabling OTG can lead to an unbootable system!\033[0m"
-	        echo -e "To avoid this issue please make sure you use the 'DC in' port for power supply"
-                echo -e "in combination with a reliable 2 A power adapter \n"
-		echo -e "---------------------------------------------------------------------------------"
-	        echo -n "Do you want to continue? (y/n) "
-	        read CHANGE
-	        if [ "$CHANGE" = "y" ]; then {
-        	        cp $TMPDIR/mnt/script.bin.otg-on $TMPDIR/mnt/script.bin
-                	echo -e "\nUSB OTG enabled... (restart required) \n"
-		} else {
-				echo -e ""
-			        echo -e "Skipping OTG configuration... \n"
-	        } fi
-        } fi
-        ;;
-  *)
-        echo -e "\033[0;31mUnknown script.bin found. Skipping OTG configuration...\033[0m \n"
-        ;;
-esac
+echo -e "Your current hardware configuration is: ${BANANIAN_PLATFORM}"
+echo -n "Do you want to change it? (y/N) "
+read CHANGE
+if [ "$CHANGE" = "y" ]; then {
+        echo -e ""
+	bananian-hardware
+        echo -e ""
+} fi
 
 echo -e "---------------------------------------------------------------------------------"
-echo -n "Do you want to expand the root file system (recommended)? (y/n) "
+echo -n "Do you want to expand the root file system (recommended)? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
         echo -e "\nExpanding root file system... (ignore the warnings and reboot immediately) \n"
@@ -204,8 +172,7 @@ if [ "$CHANGE" = "y" ]; then {
 } fi
 
 # clean up
-umount $TMPDIR/mnt
-rm -rf $TMPDIR
+umount ${TMPDIR}/mnt && rm -rf $TMPDIR
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "\033[32;40mdone! please reboot your system now! (shutdown -r now)\033[0m \n"
