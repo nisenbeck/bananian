@@ -56,7 +56,7 @@ cd $TMPDIR
 
 echo -e "---------------------------------------------------------------------------------"
 if gpg --list-keys 24BFF712 >/dev/null 2>&1;then 
-    echo -e "key already exists in GNUPG pubring... \n"
+    echo -e "key already exists in GNuPG pubring... \n"
 else
     echo -e "receiving public key... \n"
     gpg --recv-keys 24BFF712
