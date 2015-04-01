@@ -70,13 +70,19 @@ if [ $BANANIAN_VERSION -lt 150101 ]; then {
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
-echo -n "Your current keyboard layout is '${XKBLAYOUT}'. Do you want to change it? (y/N) "
-read CHANGE
-if [ "$CHANGE" = "y" ]; then {
-        echo -e "\nConfiguring keyboard layout... \n"
-	dpkg-reconfigure --priority=high keyboard-configuration
-	/etc/init.d/keyboard-setup restart
-	echo -e ""
+find /dev/input/ -name "*kbd*" | egrep '.*' > /dev/null 2>&1
+if [ $? -ne 0 ]; then {
+	echo -e "No keyboard found. Skipping keyboard configuration."
+	echo -e  ""
+} else {
+	echo -n "Your current keyboard layout is '${XKBLAYOUT}'. Do you want to change it? (y/N) "
+	read CHANGE
+	if [ "$CHANGE" = "y" ]; then {
+		echo -e "\nConfiguring keyboard layout... \n"
+		dpkg-reconfigure --priority=high keyboard-configuration
+		/etc/init.d/keyboard-setup restart
+		echo -e ""
+	} fi
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
