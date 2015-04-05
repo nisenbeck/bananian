@@ -1,0 +1,16 @@
+#!/bin/bash
+KERNELVERSION=$1
+KERNELPATH=$2
+if [ -z "$KERNELPATH" ]; then {
+	echo -e "\033[40;33mFatal error: No kernel image given.\033[0m \n"
+	exit 1
+} elif [ ! -f "$KERNELPATH" ]; then {
+	echo -e "\033[40;33mFatal error: Kernel image not found.\033[0m \n"
+        exit 1
+} else {
+	TMPDIR=$(mktemp -d)
+	echo "Installing Bananian kernel $KERNELVERSION..."
+	mount /dev/mmcblk0p1 $TMPDIR
+	cp $KERNELPATH $TMPDIR/uImage
+	umount $TMPDIR && rm -r $TMPDIR
+} fi
