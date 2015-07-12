@@ -26,6 +26,10 @@ soctemp() {
 
         # read return value from syslog and transform it into degrees Celsius
         HexVal=$(tail /var/log/syslog | awk -F" 0x" '/ 0x/ {print $2}' | tail -n1 )
+        if [ "$HexVal" = "0" ]; then {
+                echo "Oops, something went wrong"
+                exit 1
+        } fi
         CelsiusVal=$(echo $(( 0x${HexVal} - ${SoCTempAdjustment} )) | awk '{printf ("%0.1f",$1/10); }')
         case $1 in
                 f|F)
