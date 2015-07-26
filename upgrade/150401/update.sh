@@ -49,7 +49,7 @@ Upgrade instructions:
 4.) apt-get dist-upgrade
 5.) shutdown -r now
 
-More detailled instructions on debian.org:
+More detailed instructions on debian.org:
 https://www.debian.org/releases/jessie/armhf/release-notes/ch-upgrading.en.html
 
 "
