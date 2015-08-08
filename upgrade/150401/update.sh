@@ -76,6 +76,7 @@ root filesystem:
 /usr/sbin/swconfig
 /usr/local/bin/swconfig
 /sbin/swconfig
+/etc/apt/preferences.d/systemd
 /etc/apt/sources.list.d/bananian.list
 /etc/ssh/sshd_config
 /etc/rc.local
