@@ -185,7 +185,9 @@ echo -e "Adding ED25519 host key generation to /etc/rc.local... \n"
 if grep -q ssh_host_ed25519_key /etc/rc.local ; then {
 	echo -e "\033[40;33mOops. It seems like ED25519 host key generation is already in /etc/rc.local, skipping...\033[0m \n"
 } else {
-sed -i -e "/^\# generate new ssh host key$/{n;N;N;N;d}"  /etc/rc.local
+# remove old ssh host key generation code
+perl -i -0pe 's/if \[ \! -(s|f) \/etc\/ssh\/ssh_host_rsa_key(.|\n)*?\nfi\n//' /etc/rc.local
+# insert new ssh host key generation code
 sed -i '/^\# generate new ssh host key$/a \
 if [ ! -s /etc/ssh/ssh_host_rsa_key ] || [ ! -s /etc/ssh/ssh_host_rsa_key.pub ] || [ ! -s /etc/ssh/ssh_host_ed25519_key ] || [ ! -s /etc/ssh/ssh_host_ed25519_key.pub ]; then \
         # check for missing RSA host keys \
