@@ -1,16 +1,41 @@
 #!/bin/bash
 KERNELVERSION=$1
 KERNELPATH=$2
+
+# set uImage name
+KERNELMAJORVERSION=$(echo $KERNELVERSION | grep -oE "[[:digit:]]{1}" | head -1)
+if [ "$KERNELMAJORVERSION" -ge "4" ]; then {
+	# mainline kernel >= 4.x
+	KERNELNAME="uImage-next"
+} elif [ "$KERNELMAJORVERSION" -eq "3" ]; then {
+	# sunxi 3.4.x
+        KERNELNAME="uImage"
+} else {
+	# unknown kernel version
+        echo -e "\033[40;33mFatal error: Kernel version unknown.\033[0m \n"
+        exit 1
+} fi
+
+# do some checks and copy uImage to /dev/mmcblk0p1
 if [ -z "$KERNELPATH" ]; then {
 	echo -e "\033[40;33mFatal error: No kernel image given.\033[0m \n"
 	exit 1
-} elif [ ! -f "$KERNELPATH" ]; then {
+} elif [ ! -s "$KERNELPATH" ]; then {
 	echo -e "\033[40;33mFatal error: Kernel image not found.\033[0m \n"
         exit 1
 } else {
 	TMPDIR=$(mktemp -d)
-	echo "Installing Bananian kernel $KERNELVERSION..."
+	echo "Installing Bananian kernel $KERNELVERSION ($KERNELNAME)..."
 	mount /dev/mmcblk0p1 $TMPDIR
-	cp $KERNELPATH $TMPDIR/uImage
+	cp $KERNELPATH ${TMPDIR}/${KERNELNAME}
+	# copy DTB files (if kernel >= 4.x)
+	if [ "$KERNELMAJORVERSION" -ge "4" ]; then {
+		if [ ! -d "/usr/lib/linux-image-${KERNELVERSION}" ]; then {
+		        echo -e "\033[40;33mWarning: DTB files not found.\033[0m \n"
+		} else {
+			mkdir -p ${TMPDIR}/dtb
+			cp /usr/lib/linux-image-${KERNELVERSION}/*.dtb ${TMPDIR}/dtb
+		} fi
+	} fi
 	umount $TMPDIR && rm -r $TMPDIR
 } fi
