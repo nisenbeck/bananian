@@ -67,24 +67,36 @@ The following files will be modified:
 -------------------------------------
 boot partition:
 /uImage
+/boot.cmd
+/boot.scr
+/uEnv.* (del)
 
 root filesystem:
 /lib/modules/*
 /lib/firmware/*
+/usr/local/bin/bananian-config
 /usr/local/bin/raspi-config
 /usr/local/bin/soctemp
-/usr/sbin/swconfig
-/usr/local/bin/swconfig
+/usr/sbin/swconfig (del)
+/usr/local/bin/swconfig (del)
 /sbin/swconfig
 /etc/apt/preferences.d/systemd
 /etc/apt/sources.list.d/bananian.list
+/etc/kernel/postinst.d/install-bananian-kernel (del)
+/etc/kernel/postinst.d/bananian-kernel-postinst
+/etc/kernel/postinst.d/
 /etc/ssh/sshd_config
 /etc/rc.local
 /etc/skel/.zshrc
 /root/.zshrc
 
+Packages to be installed:
+-------------------------
+swconfig
+
 Important changes:
 --------------------
+- 0000149: [Kernel] prepare for mainline Kernel 4.x
 - 0000135: [Userland] add 15.08 release to bananian-update
 - 0000146: [General] Keep SysVinit instead of systemd
 - 0000134: [Userland] update Debian packages and clean up before release
@@ -120,6 +132,12 @@ gpg --armor --export 24BFF712 | apt-key add -
 echo "deb http://dl.bananian.org/packages/ jessie main" > /etc/apt/sources.list.d/bananian.list
 
 echo -e "---------------------------------------------------------------------------------"
+echo -e "installing kernel postinst hook script... \n"
+mkdir -p /etc/kernel/postinst.d
+[ -f /etc/kernel/postinst.d/install-bananian-kernel ] && rm /etc/kernel/postinst.d/install-bananian-kernel
+mv bananian-kernel-postinst /etc/kernel/postinst.d/bananian-kernel-postinst && chmod 755 /etc/kernel/postinst.d/bananian-kernel-postinst
+
+echo -e "---------------------------------------------------------------------------------"
 echo -e "installing kernel and modules... \n"
 dpkg -i linux-image*.deb
 echo -e ""
@@ -130,9 +148,26 @@ dpkg -i linux-firmware-image*.deb
 echo -e ""
 
 echo -e "---------------------------------------------------------------------------------"
+echo -e "installing U-Boot... \n"
+dd if=u-boot-sunxi-with-spl.bin of=/dev/mmcblk0 bs=1024 seek=8
+
+echo -e "---------------------------------------------------------------------------------"
+echo -e "updating boot configuration... \n"
+mkdir ${TMPDIR}/mnt
+mount /dev/mmcblk0p1 ${TMPDIR}/mnt
+mv boot.cmd ${TMPDIR}/mnt
+mv boot.scr ${TMPDIR}/mnt
+rm -f ${TMPDIR}/mnt/uEnv.*
+umount ${TMPDIR}/mnt
+
+echo -e "---------------------------------------------------------------------------------"
 echo -e "upgrading software... (Get a coffee, this might take some time.) \n"
 aptitude update && aptitude upgrade
 echo -e ""
+
+echo -e "---------------------------------------------------------------------------------"
+echo -e "upgrading bananian-config... \n"
+mv bananian-config /usr/local/bin/bananian-config && chmod 700 /usr/local/bin/bananian-config
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "upgrading raspi-config... \n"
