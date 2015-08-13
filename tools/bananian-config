@@ -46,10 +46,6 @@ ROOTPW=$(grep root /etc/shadow | awk -F ':' '{print $2}')
 DEFAULTROOTPW='$6$/QGAKW6x$crDc1KVl8u/mhU9l.LPxm3b47PIzZtjL0SmSDlEbInHu6UsusGnuCjSs2ngwv4HekpK0SwEyfKWPf97zHul.71'
 TIMEZONE=$(cat /etc/timezone)
 HOSTNAME=$(cat /etc/hostname)
-UENV=$(sha256sum ${TMPDIR}/mnt/uENV.txt | awk -F ' ' '{print $1}')
-
-UENV_ACC=$(sha256sum ${TMPDIR}/mnt/uENV.txt.video-acc-on | awk -F ' ' '{print $1}')
-UENV_NOACC=$(sha256sum ${TMPDIR}/mnt/uENV.txt.video-acc-off | awk -F ' ' '{print $1}')
 
 #echo $BANANIAN_PLATFORM # Bananian platform/board
 #echo $BANANIAN_VERSION	 # Bananian Release
@@ -59,13 +55,10 @@ UENV_NOACC=$(sha256sum ${TMPDIR}/mnt/uENV.txt.video-acc-off | awk -F ' ' '{print
 #echo $TIMEZONE		 # timezone
 #echo $LANG		 # locale
 #echo $HOSTNAME		 # hostname (as in /etc/hostname)
-#echo $UENV		 # uEnv.txt hash
-#echo $UENV_ACC		 # uEnv.txt with video acceleration (hash)
-#echo $UENV_NOACC	 # uEnv.txt without video acceleration (hash)
 
-if [ $BANANIAN_VERSION -lt 150101 ]; then {
+if [ $BANANIAN_VERSION -lt 150801 ]; then {
 	echo -e "---------------------------------------------------------------------------------"
-	echo -e "\033[0;31mThis version of bananian-config requires Bananian Linux 15.01 (or later). Exiting\033[0m \n"
+	echo -e "\033[0;31mThis version of bananian-config requires Bananian Linux 15.08 (or later). Exiting\033[0m \n"
 	exit
 } fi
 
@@ -135,28 +128,15 @@ if [ "$CHANGE" = "y" ]; then {
 	echo -e ""
 } fi
 
-echo -e "---------------------------------------------------------------------------------"
-case "$UENV" in
-  $UENV_ACC)
-	echo -n "Video acceleration is currently enabled. Do you want to disable it? (y/N) "
+if [ -f "${TMPDIR}/mnt/uImage-next" ]; then {
+	echo -e "---------------------------------------------------------------------------------"
+	echo -n "Mainline Kernel (4.x) is currently enabled. Do you want to disable it? (y/N) "
 	read CHANGE
 	if [ "$CHANGE" = "y" ]; then {
-                cp ${TMPDIR}/mnt/uENV.txt.video-acc-off ${TMPDIR}/mnt/uENV.txt
-                echo -e "\nVideo acceleration disabled... (restart required) \n"
+                rm ${TMPDIR}/mnt/uImage-next
+                echo -e "\nMainline Kernel disabled... (restart required) \n"
 	} fi
-	;;
-  $UENV_NOACC)
-	echo -n "Video acceleration is currently disabled. Do you want to enable it? (y/N) "
-        read CHANGE
-        if [ "$CHANGE" = "y" ]; then {
-		cp ${TMPDIR}/mnt/uENV.txt.video-acc-on ${TMPDIR}/mnt/uENV.txt
-                echo -e "\nVideo acceleration enabled... (restart required) \n"
-        } fi
-	;;
-  *)
-        echo -e "\033[0;31mUnknown uEnv.txt found. Skipping video acceleration configuration...\033[0m \n"
-	;;
-esac
+} fi
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "Your current hardware configuration is: ${BANANIAN_PLATFORM}"
