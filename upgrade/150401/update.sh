@@ -96,6 +96,7 @@ swconfig
 
 Important changes:
 --------------------
+- 0000151: [Hardware] LCD support is broken with mainline U-Boot 2015.07
 - 0000149: [Kernel] prepare for mainline Kernel 4.x
 - 0000135: [Userland] add 15.08 release to bananian-update
 - 0000146: [General] Keep SysVinit instead of systemd
@@ -150,6 +151,7 @@ echo -e ""
 echo -e "---------------------------------------------------------------------------------"
 echo -e "installing U-Boot... \n"
 dd if=u-boot-sunxi-with-spl.bin of=/dev/mmcblk0 bs=1024 seek=8
+sync
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "updating boot configuration... \n"
