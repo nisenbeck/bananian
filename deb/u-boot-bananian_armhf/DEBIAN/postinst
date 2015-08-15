@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "Installing U-Boot to /dev/mmcblk0..."
+dd if=/usr/lib/u-boot-sunxi-with-spl.bin of=/dev/mmcblk0 bs=1024 seek=8
+sync
+exit 0

@@ -1,0 +1,8 @@
+Package: u-boot-bananian
+Version: 15.08.01
+Architecture: armhf
+Maintainer: Nico Isenbeck <contact@bananian.org>
+Installed-Size: 1
+Section: kernel
+Priority: optional
+Description: Uboot loader for Bananian Linux
