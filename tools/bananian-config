@@ -134,7 +134,8 @@ if [ -f "${TMPDIR}/mnt/uImage-next" ]; then {
 	read CHANGE
 	if [ "$CHANGE" = "y" ]; then {
                 rm ${TMPDIR}/mnt/uImage-next
-                echo -e "\nMainline Kernel disabled... (restart required) \n"
+                echo -e "\nMainline Kernel disabled..."
+                echo -e "\033[40;33mPlease power cycle the device. (Restart is not enough!) \033[0m \n"
 	} fi
 } fi
 

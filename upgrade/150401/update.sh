@@ -116,6 +116,12 @@ Important changes:
 For a list of all changes see our changelog:
 https://dev.bananian.org/changelog_page.php?version_id=15
 
+Incompatible changes:
+--------------------
+- switching from uEnv.txt to boot.cmd/boot.scr will break SATA installations
+- swconfig will be moved to /sbin/swconfig. Adjust your scripts!
+- /root/.zshrc will be overwritten
+
 \033[0;31mDo you want to continue (yes/no)?\033[0m "
 read start_upgrade
 
