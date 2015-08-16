@@ -156,8 +156,8 @@ echo -e ""
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "installing U-Boot... \n"
-dd if=u-boot-sunxi-with-spl.bin of=/dev/mmcblk0 bs=1024 seek=8
-sync
+dpkg -i u-boot*.deb
+echo -e ""
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "updating boot configuration... \n"
