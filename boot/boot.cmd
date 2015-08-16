@@ -14,7 +14,7 @@ bootm 0x46000000 - 0x49000000
 else
 # sunxi 3.4.x
 #--------------------------------------------------------------------------------------------------------------------------------
-setenv bootargs console=ttyS0,115200 console=tty0 sunxi_g2d_mem_reserve=0 sunxi_ve_mem_reserve=0 disp.screen0_output_mode=EDID:1280x720p50 hdmi.audio=EDID:0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait
+setenv bootargs console=ttyS0,115200 console=tty0 console=tty1 sunxi_g2d_mem_reserve=0 sunxi_ve_mem_reserve=0 hdmi.audio=EDID:0 disp.screen0_output_mode=EDID:1680x1050p60 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait
 setenv bootm_boot_mode sec
 load mmc 0:1 0x43000000 script.bin
 load mmc 0:1 0x48000000 uImage
