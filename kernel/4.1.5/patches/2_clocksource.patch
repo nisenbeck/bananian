@@ -1,0 +1,51 @@
+From 2186df37831a8bb259bbf2ae07356747a03d0b8d Mon Sep 17 00:00:00 2001
+From: Chen-Yu Tsai <wens@csie.org>
+Date: Wed, 25 Mar 2015 01:22:09 +0800
+Subject: ARM: dts: sunxi: Update ahb clocks for sun5i and sun7i
+
+The clock driver now supports a muxable ahb clock. Update the dtsi
+with the proper compatible and add the new parent clocks.
+
+This also adds the new pll6/4 output for pll6 on sun7i-a20. The
+output is not used on sun4/5i.
+
+Also use assigned-clocks to reparent ahb to pll6. We want ahb to
+have a stable, non-changing clock rate. cpu/axi clock rate changes
+as a result of newly added cpufreq support.
+
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: Maxime Ripard <maxime.ripard@free-electrons.com>
+
+diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
+index d4ba772..4163ade 100644
+--- a/arch/arm/boot/dts/sun7i-a20.dtsi
++++ b/arch/arm/boot/dts/sun7i-a20.dtsi
+@@ -224,7 +224,8 @@
+ 			compatible = "allwinner,sun4i-a10-pll6-clk";
+ 			reg = <0x01c20028 0x4>;
+ 			clocks = <&osc24M>;
+-			clock-output-names = "pll6_sata", "pll6_other", "pll6";
++			clock-output-names = "pll6_sata", "pll6_other", "pll6",
++					     "pll6_div_4";
+ 		};
+ 
+ 		pll8: clk@01c20040 {
+@@ -253,10 +254,16 @@
+ 
+ 		ahb: ahb@01c20054 {
+ 			#clock-cells = <0>;
+-			compatible = "allwinner,sun4i-a10-ahb-clk";
++			compatible = "allwinner,sun5i-a13-ahb-clk";
+ 			reg = <0x01c20054 0x4>;
+-			clocks = <&axi>;
++			clocks = <&axi>, <&pll6 3>, <&pll6 1>;
+ 			clock-output-names = "ahb";
++			/*
++			 * Use PLL6 as parent, instead of CPU/AXI
++			 * which has rate changes due to cpufreq
++			 */
++			assigned-clocks = <&ahb>;
++			assigned-clock-parents = <&pll6 3>;
+ 		};
+ 
+ 		ahb_gates: clk@01c20060 {
