@@ -1,0 +1,29 @@
+Fixes: 6298e948215f ("crypto: sunxi-ss - Add Allwinner Security System crypto accelerator")
+Cc: <stable@vger.kernel.org> # v4.3+
+Tested-by: Chen-Yu Tsai <wens@csie.org>
+Signed-off-by: LABBE Corentin <clabbe.montjoie@gmail.com>
+---
+ drivers/crypto/sunxi-ss/sun4i-ss-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
+diff --git a/drivers/crypto/sunxi-ss/sun4i-ss-core.c b/drivers/crypto/sunxi-ss/sun4i-ss-core.c
+index eab6fe2..107cd2a 100644
+--- a/drivers/crypto/sunxi-ss/sun4i-ss-core.c
++++ b/drivers/crypto/sunxi-ss/sun4i-ss-core.c
+@@ -39,6 +39,7 @@ static struct sun4i_ss_alg_template ss_algs[] = {
+ 		.import = sun4i_hash_import_md5,
+ 		.halg = {
+ 			.digestsize = MD5_DIGEST_SIZE,
++			.statesize = sizeof(struct md5_state),
+ 			.base = {
+ 				.cra_name = "md5",
+ 				.cra_driver_name = "md5-sun4i-ss",
+@@ -66,6 +67,7 @@ static struct sun4i_ss_alg_template ss_algs[] = {
+ 		.import = sun4i_hash_import_sha1,
+ 		.halg = {
+ 			.digestsize = SHA1_DIGEST_SIZE,
++			.statesize = sizeof(struct sha1_state),
+ 			.base = {
+ 				.cra_name = "sha1",
+ 				.cra_driver_name = "sha1-sun4i-ss",
+-- 
+2.4.10
