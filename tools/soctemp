@@ -10,7 +10,7 @@ soctemp() {
         SoCTempAdjustment=1447
 
         # ensure module sunxi-dbgreg.ko is loaded
-        grep -q sunxi_dbgreg </proc/modules || ( modprobe sunxi-dbgreg ; sleep 0.1 )
+        grep -q sunxi_dbgreg </proc/modules || ( /sbin/modprobe sunxi-dbgreg ; sleep 0.1 )
 
         # prepare registers
         echo 'f1c25000:27003f' > /sys/devices/virtual/misc/sunxi-dbgreg/rw/write;
