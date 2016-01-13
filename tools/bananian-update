@@ -58,8 +58,12 @@ TMPDIR=$(mktemp -d)
 cd $TMPDIR
 
 echo -e "---------------------------------------------------------------------------------"
-echo -e "receiving/updating public key... \n"
-gpg --recv-keys 24BFF712
+if gpg --list-keys 24BFF712 >/dev/null 2>&1;then 
+    echo -e "key already exists in GnuPG pubring... \n"
+else
+    echo -e "receiving public key... \n"
+    gpg --recv-keys 24BFF712
+fi
 echo -e ""
 
 echo -e "---------------------------------------------------------------------------------"
