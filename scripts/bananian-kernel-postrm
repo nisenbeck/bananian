@@ -1,0 +1,33 @@
+#!/bin/bash
+KERNELVERSION=$1
+RUNNINGKERNEL=$(uname -r)
+
+# get major kernel version numbers
+KERNELMAJORVERSION=$(echo $KERNELVERSION | grep -oE "[[:digit:]]{1}" | head -1)
+RUNNINGKERNELMAJORVERSION=$(echo $RUNNINGKERNEL | grep -oE "[[:digit:]]{1}" | head -1)
+
+# set uImage name
+if [ "$KERNELMAJORVERSION" -ge "4" ]; then {
+	# mainline kernel >= 4.x
+	KERNELNAME="uImage-next"
+} elif [ "$KERNELMAJORVERSION" -eq "3" ]; then {
+	# sunxi 3.4.x
+        KERNELNAME="uImage"
+} else {
+	# unknown kernel version
+        echo -e "\033[40;33mFatal error: Kernel version unknown.\033[0m \n"
+        exit 1
+} fi
+
+# remove uImage-next...
+# ... if kernel version >= 4.x
+if [ "$KERNELMAJORVERSION" -ge "4" ]; then {
+	# ... and running kernel is removed kernel or kernel 3.4 is still running
+	if [ "$RUNNINGKERNEL" = "$KERNELVERSION" ] || [ "$RUNNINGKERNELMAJORVERSION" -eq "3" ]; then {
+		TMPDIR=$(mktemp -d)
+		mount /dev/mmcblk0p1 $TMPDIR
+		echo "Removing Bananian kernel $KERNELVERSION ($KERNELNAME)..."
+		rm -f ${TMPDIR}/${KERNELNAME}
+		umount $TMPDIR && rm -r $TMPDIR
+	} fi
+} fi
