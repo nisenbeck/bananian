@@ -1,16 +1,19 @@
 #!/bin/bash
-pmutemp() {
-        # function to read out the thermal probe inside the AXP209 power
-        # management unit via I2C
+# read out the thermal probe inside the AXP209 power management unit via I2C
+
+KERNELMAJORVERSION=$(uname -r | grep -oE "[[:digit:]]{1}" | head -1)
+
+if [ "$KERNELMAJORVERSION" -eq "3" ]; then {
         CelsiusVal=$(awk '{printf ("%0.1f",$1/1000); }' </sys/devices/platform/sunxi-i2c.0/i2c-0/0-0034/temp1_input)
         case $1 in
-                f|F)
-                        echo ${CelsiusVal} | awk '{print "approx. "( ( 9/5 ) * $1 ) + 32"°F"}'
+                f|F|-f|-F)
+                        echo ${CelsiusVal} | awk '{print "approx. "( ( 9/5 ) * $1 ) + 32" °F"}'
                         ;;
                 *)
-                        echo "approx. ${CelsiusVal}°C"
+                        echo "approx. ${CelsiusVal} °C"
                         ;;
         esac
-} # pmutemp
-
-pmutemp $1
+} else {
+        echo "Your kernel is not supported by this version of pmutemp"
+        exit 1
+} fi
