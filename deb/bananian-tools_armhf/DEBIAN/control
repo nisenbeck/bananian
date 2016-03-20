@@ -1,0 +1,8 @@
+Package: bananian-tools
+Version: 16.04.01
+Architecture: armhf
+Maintainer: Nico Isenbeck <contact@bananian.org>
+Installed-Size: 1
+Section: kernel
+Priority: important
+Description: Bananian userland tools like bananian-config, bananian-update, ...
