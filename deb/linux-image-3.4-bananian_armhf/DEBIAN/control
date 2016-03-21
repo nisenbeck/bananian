@@ -1,0 +1,9 @@
+Package: linux-image-3.4-bananian
+Version: 16.04.01
+Architecture: armhf
+Maintainer: Nico Isenbeck <contact@bananian.org>
+Installed-Size: 1
+Section: kernel
+Priority: optional
+Depends: linux-image-3.4.110-bananian (= 16.04.01)
+Description: Linux Kernel 3.4.x for Bananian
