@@ -7,10 +7,10 @@ if [ "$KERNELMAJORVERSION" -eq "3" ]; then {
         CelsiusVal=$(awk '{printf ("%0.1f",$1/1000); }' </sys/devices/platform/sunxi-i2c.0/i2c-0/0-0034/temp1_input)
         case $1 in
                 f|F|-f|-F)
-                        echo ${CelsiusVal} | awk '{print "approx. "( ( 9/5 ) * $1 ) + 32" °F"}'
+                        echo ${CelsiusVal} | awk '{print ( ( 9/5 ) * $1 ) + 32" °F"}'
                         ;;
                 *)
-                        echo "approx. ${CelsiusVal} °C"
+                        echo "${CelsiusVal} °C"
                         ;;
         esac
 } else {
