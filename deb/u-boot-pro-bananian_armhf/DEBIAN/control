@@ -5,5 +5,5 @@ Maintainer: Nico Isenbeck <contact@bananian.org>
 Installed-Size: 1
 Section: kernel
 Priority: optional
-Conflicts: u-boot-bananian
+Conflicts: u-boot-bananian, u-boot-m2-bananian
 Description: Uboot loader for Bananian Linux on Banana Pro
