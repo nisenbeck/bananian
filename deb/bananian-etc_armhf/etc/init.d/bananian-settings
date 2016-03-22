@@ -1,0 +1,39 @@
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          bananian-settings
+# Required-Start:    $remote_fs $syslog
+# Required-Stop:     $remote_fs $syslog
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: bananian-setting
+# Description:       Generate SSH host keys and apply some general settings
+### END INIT INFO
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin
+
+# remount filesystem with noatime flag
+mount -o remount -o noatime /
+
+# generate new ssh host key
+if [ ! -s /etc/ssh/ssh_host_rsa_key ] || [ ! -s /etc/ssh/ssh_host_rsa_key.pub ] || [ ! -s /etc/ssh/ssh_host_ed25519_key ] || [ ! -s /etc/ssh/ssh_host_ed25519_key.pub ]; then
+        # check for missing RSA host keys
+        if [ ! -s /etc/ssh/ssh_host_rsa_key ] || [ ! -s /etc/ssh/ssh_host_rsa_key.pub ]; then
+                rm -f /etc/ssh/ssh_host_rsa_key*
+        fi
+        # check for missing ED25519 host keys
+        if [ ! -s /etc/ssh/ssh_host_ed25519_key ] || [ ! -s /etc/ssh/ssh_host_ed25519_key.pub ]; then
+                rm -f /etc/ssh/ssh_host_ed25519_key*
+        fi
+        # (re)generate all missing keys
+        dpkg-reconfigure openssh-server
+fi
+
+# cpu frequency
+echo ondemand > /sys/devices/system/cpu/cpu0/cpufreq/scaling_governor
+echo 600000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_min_freq
+echo 1008000 > /sys/devices/system/cpu/cpu0/cpufreq/scaling_max_freq
+echo 25 > /sys/devices/system/cpu/cpufreq/ondemand/up_threshold
+echo 10 > /sys/devices/system/cpu/cpufreq/ondemand/sampling_down_factor
+echo 1 > /sys/devices/system/cpu/cpufreq/ondemand/io_is_busy
+
+exit 0
