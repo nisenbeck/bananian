@@ -2,7 +2,7 @@
 
 # The MIT License (MIT)
 #
-# Copyright (c) 2014 Nico Isenbeck <contact@bananian.org>
+# Copyright (c) 2016 Nico Isenbeck <contact@bananian.org>
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -31,6 +31,10 @@ if [ $BANANIAN_VERSION -lt 150101 ]; then {
         exit
 } fi
 
+# get kernel version
+KERNELMAJORVERSION=$(uname -r | grep -oE "[[:digit:]]{1}" | head -1)
+
+if [ "$KERNELMAJORVERSION" -eq "3" ]; then {
 # prepare tmp dir
 TMPDIR=$(mktemp -d)
 cd $TMPDIR
@@ -81,3 +85,17 @@ if [[ -z $BANANIAN_PLATFORM ]]; then {
 
 # clean up
 umount ${TMPDIR}/mnt && rm -rf $TMPDIR
+
+} else {
+echo -e "Loading, please wait..."
+
+MSGBOX="bananian-hardware is no longer required on Linux 4.x.
+
+To change the hardware platform install one of the u-boot packages below, corresponding to your hardware:
+$(aptitude search 'u-boot-(.*)-bananian' --disable-columns | awk -F '\ -\ ' '{print $1 ";" $2}' | column -t -s ';')
+
+If your device is not listed, most probably everything is fine with the default u-boot (u-boot-bananian)."
+
+whiptail --title "Bananian hardware configuration" --msgbox "$MSGBOX" 40 100
+
+} fi
