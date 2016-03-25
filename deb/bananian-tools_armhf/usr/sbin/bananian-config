@@ -135,7 +135,16 @@ if [ -f "${TMPDIR}/mnt/uImage-next" ]; then {
 	if [ "$CHANGE" = "y" ]; then {
                 rm ${TMPDIR}/mnt/uImage-next
                 echo -e "\nMainline Kernel disabled..."
-                echo -e "\033[40;33mPlease restart your system\033[0m \n"
+		echo -e "---------------------------------------------------------------------------------"
+		echo -n "Do you also want to remove all mainline Kernel packages? (Y/n) "
+		read CHANGE
+		if [ "$CHANGE" != "n" ]; then {
+			PACKAGES=$(dpkg-query -W -f='${Package} ${Status} \n' linux-\*-4.\*-bananian 2>/dev/null | grep "ok installed" | awk -F ' ' '{print $1}' | tr '\n' ' ')
+			if [ -n "$PACKAGES" ]; then {
+				aptitude remove -y $PACKAGES
+				echo -e "Packages removed..."
+			} fi
+		} fi
 	} fi
 } fi
 
