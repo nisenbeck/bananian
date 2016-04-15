@@ -128,7 +128,7 @@ if [ "$CHANGE" = "y" ]; then {
 	echo -e ""
 } fi
 
-if [ -f "${TMPDIR}/mnt/uImage-next" ]; then {
+if [ -f "${TMPDIR}/mnt/uImage-next" ] && [ -f "${TMPDIR}/mnt/uImage" ]; then {
 	echo -e "---------------------------------------------------------------------------------"
 	echo -n "Mainline Kernel (4.x) is currently enabled. Do you want to disable it? (y/N) "
 	read CHANGE
