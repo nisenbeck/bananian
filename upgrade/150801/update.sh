@@ -111,7 +111,7 @@ echo "# Use bananian-update to get the latest release!" >> /etc/apt/sources.list
 echo "deb http://dl.bananian.org/packages/ 1604 main" >> /etc/apt/sources.list.d/bananian.list
 
 echo -e "---------------------------------------------------------------------------------"
-echo -e "updating package lists... \n"
+echo -e "updating package lists... (Get a coffee, this might take some time) \n"
 aptitude update
 echo -e ""
 
@@ -147,7 +147,7 @@ if [ -n "$UBOOTPACKAGE" ]; then {
 echo -e ""
 
 echo -e "---------------------------------------------------------------------------------"
-echo -e "upgrading software... (Get a coffee, this might take some time.) \n"
+echo -e "upgrading software... \n"
 aptitude upgrade
 echo -e ""
 
@@ -166,7 +166,7 @@ echo -e ""
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "cleaning up /etc/rc.local... \n"
-perl -i -0pe 's/\#\ generate\ new\ ssh\ host\ key\nif \[ \! -(s|f) \/etc\/ssh\/ssh_host_rsa_key(.|\n)*?\nfi\n//' /etc/rc.local
+perl -i -0pe 's/\#\ generate\ new\ ssh\ host\ key\nif \[ \! -(s|f) \/etc\/ssh\/ssh_host_rsa_key(.|\n)*?\nfi( |)\n//' /etc/rc.local
 perl -i -0pe 's/\#\ cpu\ frequency(.|\n)*?io_is_busy\n//' /etc/rc.local
 perl -i -0pe 's/\#\ remount\ filesystem\ with\ noatime\ flag(.|\n)*?noatime\ \/\n//' /etc/rc.local
 echo -e ""
