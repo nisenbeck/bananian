@@ -1,9 +1,9 @@
 Package: linux-image-4.4-bananian
-Version: 16.04.03
+Version: 16.04.04
 Architecture: armhf
 Maintainer: Nico Isenbeck <contact@bananian.org>
 Installed-Size: 1
 Section: kernel
 Priority: optional
-Depends: linux-image-4.4.14-bananian (>= 16.04.03), linux-firmware-image (>= 16.04.01)
+Depends: linux-image-4.4.24-bananian (>= 16.04.04), linux-firmware-image (>= 16.04.01)
 Description: Linux Kernel 4.4.x for Bananian
