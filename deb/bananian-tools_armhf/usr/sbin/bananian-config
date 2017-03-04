@@ -36,7 +36,7 @@ mount /dev/mmcblk0p1 ${TMPDIR}/mnt
 echo -e "---------------------------------------------------------------------------------"
 echo -e "\033[40;37mWelcome to bananian-config!\033[0m \n"
 echo -e "This script assists you to set up some basic parameters... \n"
-echo -e "For news and updates check: http://www.bananian.org \n"
+echo -e "For news and updates check: https://www.bananian.org \n"
 
 # collect system configuration
 [ -f /etc/bananian_platform ] && BANANIAN_PLATFORM=$(cat /etc/bananian_platform) || BANANIAN_PLATFORM="BananaPi"
@@ -81,15 +81,15 @@ if [ $? -ne 0 ]; then {
 echo -e "---------------------------------------------------------------------------------"
 if [ "$ROOTPW" = "$DEFAULTROOTPW" ]; then {
 	echo -e "\033[0;31mYour current root password is still 'pi'. You have to change it now!\033[0m"
-        echo -e "\nConfiguring root password... \n"
+	echo -e "\nConfiguring root password... \n"
 	passwd
 	echo -e ""
 } else {
 	echo -n "Do you want to change your root password? (y/N) "
 	read CHANGE
 	if [ "$CHANGE" = "y" ]; then {
-	        echo -e "\nConfiguring root password... \n"
-        	passwd
+		echo -e "\nConfiguring root password... \n"
+		passwd
 		echo -e ""
 	} fi
 } fi
@@ -98,7 +98,7 @@ echo -e "-----------------------------------------------------------------------
 echo -n "Your current timezone is '${TIMEZONE}'. Do you want to change it? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
-        echo -e "\nConfiguring timezone... \n"
+	echo -e "\nConfiguring timezone... \n"
 	dpkg-reconfigure tzdata
 } fi
 
@@ -106,8 +106,8 @@ echo -e "-----------------------------------------------------------------------
 echo -n "Your current locale is '${LANG}'. Do you want to change it? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
-        echo -e "\nConfiguring locales... \n"
-        dpkg-reconfigure locales
+		echo -e "\nConfiguring locales... \n"
+		dpkg-reconfigure locales
 	echo -e ""
 } fi
 
@@ -133,8 +133,8 @@ if [ -f "${TMPDIR}/mnt/uImage-next" ] && [ -f "${TMPDIR}/mnt/uImage" ]; then {
 	echo -n "Mainline Kernel (4.x) is currently enabled. Do you want to disable it? (y/N) "
 	read CHANGE
 	if [ "$CHANGE" = "y" ]; then {
-                rm ${TMPDIR}/mnt/uImage-next
-                echo -e "\nMainline Kernel disabled..."
+		rm ${TMPDIR}/mnt/uImage-next
+		echo -e "\nMainline Kernel disabled..."
 		echo -e "---------------------------------------------------------------------------------"
 		echo -n "Do you also want to remove all mainline Kernel packages? (Y/n) "
 		read CHANGE
@@ -153,18 +153,18 @@ echo -e "Your current hardware configuration is: ${BANANIAN_PLATFORM}"
 echo -n "Do you want to change it? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
-        echo -e ""
+	echo -e ""
 	bananian-hardware
-        echo -e ""
+	echo -e ""
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
 echo -n "Do you want to expand the root file system (recommended)? (y/N) "
 read CHANGE
 if [ "$CHANGE" = "y" ]; then {
-        echo -e "\nExpanding root file system... (ignore the warnings and reboot immediately) \n"
+	echo -e "\nExpanding root file system... (ignore the warnings and reboot immediately) \n"
 	raspi-config --expand-rootfs
-        echo -e ""
+	echo -e ""
 } fi
 
 # clean up
