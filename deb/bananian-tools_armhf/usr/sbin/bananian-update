@@ -35,22 +35,22 @@ READABLE_VERSION="$(echo $BANANIAN_VERSION | cut -b 1-2).$(echo $BANANIAN_VERSIO
 echo -e "---------------------------------------------------------------------------------"
 echo -e "\033[40;37mWelcome to bananian-update!\033[0m \n"
 echo -e "This script upgrades your Bananian installation. \n"
-echo -e "For news and updates check: http://www.bananian.org \n"
+echo -e "For news and updates check: https://www.bananian.org \n"
 echo -e "\033[0;31mDon't panic, you will be asked to confirm before applying any updates!\033[0m \n"
 
 # on 14.08 we need to install curl first
 if ! [ -f /usr/bin/curl ]; then {
-        echo -e "---------------------------------------------------------------------------------"
-        echo -e "we need to install curl first... (please wait) \n"
-        aptitude update && aptitude install -y curl
+	echo -e "---------------------------------------------------------------------------------"
+	echo -e "we need to install curl first... (please wait) \n"
+	aptitude update && aptitude install -y curl
 } fi
 
 # on 14.08 we need to create a GnuPG config first
 if ! [ -f /root/.gnupg/gpg.conf ]; then {
-        echo -e "---------------------------------------------------------------------------------"
-        echo -e "we need to create a default GnuPG config first... \n"
-        gpg -k
-        echo -e ""
+	echo -e "---------------------------------------------------------------------------------"
+	echo -e "we need to create a default GnuPG config first... \n"
+	gpg -k
+	echo -e ""
 } fi
 
 # prepare tmp dir
@@ -59,7 +59,7 @@ cd $TMPDIR
 
 echo -e "---------------------------------------------------------------------------------"
 echo -e "receiving/updating public key... \n"
-gpg --recv-keys 24BFF712
+gpg --recv-keys "F834 22AC DEFE 8347 A3D8  9F11 1456 A3B4 24BF F712"
 echo -e ""
 
 echo -e "---------------------------------------------------------------------------------"
@@ -72,11 +72,11 @@ echo -e "-----------------------------------------------------------------------
 echo -e "verifying signature... \n"
 gpg --verify $TMPDIR/update.tar.gz.asc
 if [ $? -ne 0 ]; then {
-        echo -e "\n\033[40;31minvalid signature. exiting!\033[0m"
+	echo -e "\n\033[40;31minvalid signature. exiting!\033[0m"
 	rm -rf $TMPDIR
-        exit
+	exit
 } else {
-        echo -e "\nsignature okay.\n"
+	echo -e "\nsignature okay.\n"
 } fi
 
 echo -e "---------------------------------------------------------------------------------"
